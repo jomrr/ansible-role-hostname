@@ -1,0 +1,88 @@
+---
+# role: ansible-role-hostname
+# file: molecule/vbox/molecule.yml
+
+dependency:
+  name: galaxy
+  options:
+    role-file: molecule/resources/roles/requirements.yml
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+    type: virtualbox
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+  flake8
+platforms:
+  - name: hostname-alpine310
+    box: "generic/alpine310"
+    cpus: 2
+    memory: 1024
+  - name: hostname-amazonlinux2
+    box: "bento/amazonlinux-2"
+    cpus: 2
+    memory: 1024
+  - name: hostname-arch
+    box: "archlinux/archlinux"
+    cpus: 2
+    memory: 1024
+  - name: hostname-centos7
+    box: "centos/7"
+    cpus: 2
+    memory: 1024
+  - name: hostname-centos8
+    box: "centos/8"
+    cpus: 2
+    memory: 1024
+  - name: hostname-debian9
+    box: "debian/stretch64"
+    cpus: 2
+    memory: 1024
+  - name: hostname-debian10
+    box: "debian/buster64"
+    cpus: 2
+    memory: 1024
+  - name: hostname-fedora31
+    box: "fedora/31-cloud-base"
+    cpus: 2
+    memory: 1024
+  - name: hostname-suse-leap-15
+    box: "bento/opensuse-leap-15"
+    cpus: 2
+    memory: 1024
+  - name: hostname-oracle7
+    box: "generic/oracle7"
+    cpus: 2
+    memory: 1024
+  - name: hostname-oracle8
+    box: "generic/oracle8"
+    cpus: 2
+    memory: 1024
+  - name: hostname-ubuntu1804
+    box: "ubuntu/bionic64"
+    cpus: 2
+    memory: 1024
+  - name: hostname-ubuntu2004
+    box: "ubuntu/focal64"
+    cpus: 2
+    memory: 1024
+provisioner:
+  name: ansible
+  log: True
+  playbooks:
+    prepare: ../resources/playbooks/prepare.yml
+    converge: ../resources/playbooks/converge.yml
+  inventory:
+    group_vars:
+      all:
+verifier:
+  name: testinfra
+  env:
+    PYTHONWARNINGS: "ignore"
+  directory: ../resources/tests
+  options:
+    v: True
+    sudo: True

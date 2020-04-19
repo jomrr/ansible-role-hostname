@@ -1,0 +1,15 @@
+---
+# role: ansible-role-hostname
+# file: handlers/main.yml
+
+- name: restart hostname
+  service:
+    name: hostname
+    state: restarted
+  when: ansible_service_mgr != 'systemd'
+
+- name: restart systemd-logind
+  service:
+    name: systemd-logind
+    state: restarted
+  when: ansible_service_mgr == 'systemd'

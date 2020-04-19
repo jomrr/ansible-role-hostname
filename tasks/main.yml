@@ -1,0 +1,7 @@
+---
+# role: ansible-role-hostname
+# file: tasks/main.yml
+
+- name: Import tasks for role ansible-role-hostname
+  import_tasks: tasks.yml
+  when: hostname_role_enabled | bool

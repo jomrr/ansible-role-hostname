@@ -1,0 +1,10 @@
+---
+# role: ansible-role-hostname
+# file: molecule/resources/playbooks/vars.yml
+
+hostname_role_enabled: True
+hostname_short: testhost
+hosts_role_enabled: True
+hosts_ip_static: True
+hosts_domain: "homebase.lan"
+hostname_fqdn: "testhost.homebase.lan"

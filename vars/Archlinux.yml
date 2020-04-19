@@ -1,0 +1,8 @@
+---
+# role: ansible-role-hostname
+# file: vars/Archlinux.yml
+
+hostname_packages:
+  - inetutils
+
+hostname_use: systemd

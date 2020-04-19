@@ -1,0 +1,8 @@
+---
+# role: ansible-role-hostname
+# file: vars/Debian.yml
+
+hostname_packages:
+  - hostname
+
+hostname_use: debian

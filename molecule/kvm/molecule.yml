@@ -1,0 +1,48 @@
+---
+# role: ansible-role-hostname
+# file: molecule/kvm/molecule.yml
+
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+  provider:
+    name: libvirt
+    type: libvirt
+    options:
+      memory: 2048
+      cpus: 2
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+  flake8
+platforms:
+  - name: hostname-arch
+    box: "archlinux/archlinux"
+  - name: hostname-centos8
+    box: "centos/8"
+  - name: hostname-debian10
+    box: "debian/buster64"
+  - name: hostname-fedora31
+    box: "fedora/31-cloud-base"
+  - name: hostname-ubuntu1804
+    box: "generic/ubuntu1804"
+provisioner:
+  name: ansible
+  log: True
+  playbooks:
+    prepare: ../resources/playbooks/prepare.yml
+    converge: ../resources/playbooks/converge.yml
+  inventory:
+    group_vars:
+      all:
+        hostname_role_enabled: True
+verifier:
+  name: testinfra
+  env:
+    PYTHONWARNINGS: "ignore"
+  directory: ../resources/tests
+  options:
+    v: True
+    sudo: True
