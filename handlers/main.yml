@@ -13,3 +13,6 @@
     name: systemd-logind
     state: restarted
   when: ansible_service_mgr == 'systemd'
+
+- name: gather facts
+  gather_facts:
