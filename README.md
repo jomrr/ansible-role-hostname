@@ -1,5 +1,7 @@
 # ansible-role-hostname
 
+![GitHub](https://img.shields.io/github/license/jam82/ansible-role-hostname) [![Build Status](https://travis-ci.org/jam82/ansible-role-hostname.svg?branch=main)](https://travis-ci.org/jam82/ansible-role-hostname)
+
 **Ansible role for changing the hostname of a system.**
 
 > WARNING: Use with caution! ;-)
@@ -15,37 +17,37 @@ and this one, because I wanted an independant way to manage `/etc/hosts`-entries
 ## Supported Platforms
 
 - Alpine
-- Amazonlinux
+- Amazon
 - Archlinux
 - CentOS
 - Debian
 - Fedora
-- Oraclelinux
-- Suse
+- Manjaro
+- OracleLinux
+- OpenSuse Leap, Tumbleweed
+- Raspbian
 - Ubuntu
 
 ## Requirements
 
-Ansible 2.8 or higher.
+Ansible 2.9 or higher.
 
 ## Variables
 
 Variables and defaults for this role:
 
 ```yaml
----
-# role: ansible-role-hostname
-# file: defaults/main.yml
-
 # The role is disabled by default, so you do not get in trouble.
-# Checked in tasks/main.yml which includes tasks.yml if enabled.
-hostname_role_enabled: False
+# Checked in tasks/main.yml.
+hostname_role_enabled: false
 
 # If you want to change the hostname of a system, set this.
-hostname_short: "{{ ansible_hostname }}"
+hostname: "{{ ansible_hostname }}"
 ```
 
 ## Dependencies
+
+Run `ansible-role-hosts` after changing hostname to update your `/etc/hosts`-file
 
 - [`ansible-role-hosts`](https://github.com/jam82/ansible-role-hosts)
 
@@ -78,11 +80,12 @@ Here is a simple example to rename all hosts of the hostgroup `db`.
 # file: site.yml
 
 - hosts: db
-  become: True
+  become: true
+  gather_facts: true
   vars:
-    hostname_role_enabled: True
-    hostname_short: "db-{{ ansible_hostname }}"
-    hosts_role_enabled: True
+    hostname_role_enabled: true
+    hostname: "db-{{ ansible_hostname }}"
+    hosts_role_enabled: true
   roles:
     - role: ansible-role-hostname
     - role: ansible-role-hosts
@@ -116,11 +119,12 @@ to the `vars`-dictionary.
 # file: site.yml
 
 - hosts: foreman
-  become: True
+  become: true
+  gather_facts: true
   vars:
-    hosts_role_enabled: True
-    hostname_role_enabled: True
-    hostname_short: "foreman-{{ ansible_hostname }}"
+    hosts_role_enabled: true
+    hostname_role_enabled: true
+    hostname: "foreman-{{ ansible_hostname }}"
   roles:
     - role: ansible-role-hostname
     - role: ansible-role-hosts
@@ -136,4 +140,5 @@ See [LICENSE](https://github.com/jam82/ansible-role-hostname/blob/master/LICENSE
 
 ## References
 
+- [ansible.builtin.hostname](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/hostname_module.html)
 - [ArchWiki](https://wiki.archlinux.org/)
