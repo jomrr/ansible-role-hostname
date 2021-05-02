@@ -1,0 +1,18 @@
+---
+# role: ansible-role-hostname
+# file: vars/main.yml
+
+_hostname_packages:
+  Alpine:
+    - net-tools
+  Archlinux:
+    - inetutils
+    - net-tools
+  Debian:
+    - hostname
+  RedHat:
+    - hostname
+  Suse:
+    - hostname
+
+hostname_packages: "{{ _hostname_packages[ansible_os_family] | default([]) }}"

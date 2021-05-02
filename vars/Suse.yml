@@ -1,8 +1,0 @@
----
-# role: ansible-role-hostname
-# file: vars/Suse.yml
-
-hostname_packages:
-  - hostname
-
-hostname_use: sles
