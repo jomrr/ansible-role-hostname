@@ -1,6 +1,6 @@
 # ansible-role-hostname
 
-![GitHub](https://img.shields.io/github/license/jam82/ansible-role-hostname) [![Build Status](https://travis-ci.org/jam82/ansible-role-hostname.svg?branch=main)](https://travis-ci.org/jam82/ansible-role-hostname)
+![GitHub](https://img.shields.io/github/license/jomrr/ansible-role-hostname) [![Build Status](https://travis-ci.org/jomrr/ansible-role-hostname.svg?branch=main)](https://travis-ci.org/jomrr/ansible-role-hostname)
 
 **Ansible role for changing the hostname of a system.**
 
@@ -11,7 +11,7 @@
 I use this mainly to bootstrap Raspbian installations which have set
 `raspberrypi` as default hostname.
 
-I decided to separate [`ansible-role-hosts`](https://github.com/jam82/ansible-role-hosts)
+I decided to separate [`ansible-role-hosts`](https://github.com/jomrr/ansible-role-hosts)
 and this one, because I wanted an independant way to manage `/etc/hosts`-entries.
 
 ## Supported Platforms
@@ -49,7 +49,7 @@ hostname: "{{ ansible_hostname }}"
 
 Run `ansible-role-hosts` after changing hostname to update your `/etc/hosts`-file
 
-- [`ansible-role-hosts`](https://github.com/jam82/ansible-role-hosts)
+- [`ansible-role-hosts`](https://github.com/jomrr/ansible-role-hosts)
 
 This could be a `requirements.yml`-file in your playbook.
 See [Ansible Galaxy Docs](https://galaxy.ansible.com/docs/using/installing.html#installing-multiple-roles-from-a-file).
@@ -58,7 +58,7 @@ See [Ansible Galaxy Docs](https://galaxy.ansible.com/docs/using/installing.html#
 ---
 # file: requirements.yml
 
-- src: https://github.com/jam82/ansible-role-hosts.git
+- src: https://github.com/jomrr/ansible-role-hosts.git
   name: hosts
   version: master
 ```
@@ -98,7 +98,7 @@ all systems should return their FQDN when issuing `hostname -f`.
 Some services require this to work, e.g. foreman.
 
 This uses the role
-[`ansible-role-hosts`](https://github.com/jam82/ansible-role-hosts)
+[`ansible-role-hosts`](https://github.com/jomrr/ansible-role-hosts)
 as dependency and assumes your hosts have static ip addresses.
 
 If the hosts have IP addresses assigned via dhcp as permanent leases
@@ -132,11 +132,11 @@ to the `vars`-dictionary.
 
 ## License and Author
 
-- Author:: [jam82](https://github.com/jam82/)
-- Copyright:: 2020, [jam82](https://github.com/jam82/)
+- Author:: [jomrr](https://github.com/jomrr/)
+- Copyright:: 2020, [jomrr](https://github.com/jomrr/)
 
 Licensed under [MIT License](https://opensource.org/licenses/MIT).
-See [LICENSE](https://github.com/jam82/ansible-role-hostname/blob/master/LICENSE) file in repository.
+See [LICENSE](https://github.com/jomrr/ansible-role-hostname/blob/master/LICENSE) file in repository.
 
 ## References
 
