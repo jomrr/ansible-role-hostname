@@ -1,10 +1,6 @@
 ---
-# role: ansible-role-hostname
+# role: jomrr.hostname
 # file: defaults/main.yml
-
-# The role is disabled by default, so you do not get in trouble.
-# Checked in tasks/main.yml.
-hostname_role_enabled: false
 
 # If you want to change the hostname of a system, set this.
 hostname: "{{ ansible_hostname }}"

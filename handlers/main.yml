@@ -1,18 +1,18 @@
 ---
-# role: ansible-role-hostname
+# role: jomrr.hostname
 # file: handlers/main.yml
 
-- name: restart hostname
-  service:
+- name: "Restart hostname"
+  ansible.builtin.service:
     name: hostname
     state: restarted
   when: ansible_service_mgr != 'systemd'
 
-- name: restart systemd-logind
-  service:
+- name: "Restart systemd-logind"
+  ansible.builtin.service:
     name: systemd-logind
     state: restarted
   when: ansible_service_mgr == 'systemd'
 
-- name: gather facts
-  gather_facts:
+- name: "Gather facts"
+  ansible.builtin.gather_facts:

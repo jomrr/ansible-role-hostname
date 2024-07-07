@@ -1,5 +1,5 @@
 ---
-# role: ansible-role-hosts
+# role: jomrr.hostname
 # file: molecule/resources/playbooks/verify.yml
 
 - name: Verify
@@ -8,11 +8,11 @@
   gather_facts: true
   tasks:
     - name: "Lookup short hostname"
-      command: hostname
+      ansible.builtin.command: hostname
       changed_when: false
       register: hostname_short
 
     - name: "Assertions"
-      assert:
+      ansible.builtin.assert:
         that:
           - "ansible_hostname in hostname_short.stdout"

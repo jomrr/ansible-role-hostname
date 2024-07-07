@@ -1,27 +1,20 @@
 ---
-# role: ansible-role-hostname
+# role: jomrr.hostname
 # file: tasks/main.yml
 
-- name: Import tasks for role ansible-role-hostname
-  block:
-    - name: "Install packages for ansible-role-hostname"
-      package:
-        name: "{{ hostname_packages }}"
-        state: present
+- name: "Install packages for ansible-role-hostname"
+  ansible.builtin.package:
+    name: "{{ hostname_packages }}"
+    state: present
 
-    - name: "Set hostname"
-      hostname:
-        name: "{{ hostname }}"
-      register: hostname_change
-      notify:
-        - restart hostname
-        - restart systemd-logind
-        - gather facts
-      when: ansible_virtualization_role == 'host'
-        or (ansible_virtualization_role == 'guest'
-        and ansible_virtualization_type not in ['docker', 'lxc', 'podman'])
-  when: hostname_role_enabled | bool
-
-- name: "Debug os family"
-  debug:
-    msg: "{{ ansible_os_family }}"
+- name: "Set hostname"
+  ansible.builtin.hostname:
+    name: "{{ hostname }}"
+  register: hostname_change
+  notify:
+    - restart hostname
+    - restart systemd-logind
+    - gather facts
+  when: ansible_virtualization_role == 'host'
+    or (ansible_virtualization_role == 'guest'
+    and ansible_virtualization_type not in ['docker', 'lxc', 'podman'])

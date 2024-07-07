@@ -1,5 +1,5 @@
 ---
-# role: ansible-role-hostname
+# role: jomrr.hostname
 # file: molecule/default/molecule.yml
 
 dependency:
