@@ -1,6 +1,7 @@
 ---
-# role: jomrr.hostname
+# role: hostname
 # file: defaults/main.yml
 
-# If you want to change the hostname of a system, set this.
-hostname: "{{ ansible_hostname }}"
+# Desired system hostname; defaults to the current short hostname.
+hostname_name: "{{ ansible_facts.hostname }}"
+# hostname_name: "web01"

@@ -1,144 +1,127 @@
-# ansible-role-hostname
+# Ansible Role: hostname
 
-![GitHub](https://img.shields.io/github/license/jomrr/ansible-role-hostname) [![Build Status](https://travis-ci.org/jomrr/ansible-role-hostname.svg?branch=main)](https://travis-ci.org/jomrr/ansible-role-hostname)
+![GitHub](https://img.shields.io/github/license/jomrr/ansible-role-hostname)
+![GitHub last commit](https://img.shields.io/github/last-commit/jomrr/ansible-role-hostname)
+![GitHub issues](https://img.shields.io/github/issues-raw/jomrr/ansible-role-hostname)
+[![dev](https://img.shields.io/github/actions/workflow/status/jomrr/ansible-role-hostname/dev.yml?branch=dev&event=push&label=dev)](https://github.com/jomrr/ansible-role-hostname/actions/workflows/dev.yml?query=branch%3Adev)
+[![main](https://img.shields.io/github/actions/workflow/status/jomrr/ansible-role-hostname/main.yml?branch=main&event=push&label=main)](https://github.com/jomrr/ansible-role-hostname/actions/workflows/main.yml?query=branch%3Amain)
 
-**Ansible role for changing the hostname of a system.**
-
-> WARNING: Use with caution! ;-)
+Ansible role for managing the system hostname.
 
 ## Purpose
 
-I use this mainly to bootstrap Raspbian installations which have set
-`raspberrypi` as default hostname.
+Install hostname utilities and set the system hostname on physical machines
+and virtual machines. Container guests, including Docker, Podman, and LXC,
+retain the hostname
+assigned by their container runtime.
 
-I decided to separate [`ansible-role-hosts`](https://github.com/jomrr/ansible-role-hosts)
-and this one, because I wanted an independant way to manage `/etc/hosts`-entries.
+## Scope
 
-## Supported Platforms
+### Managed
 
-- Alpine
-- Amazon
-- Archlinux
-- CentOS
-- Debian
-- Fedora
-- Manjaro
-- OracleLinux
-- OpenSuse Leap, Tumbleweed
-- Raspbian
-- Ubuntu
+- Platform-specific hostname utility packages.
+- The active and persistent system hostname on supported non-container hosts.
+
+### Not Managed
+
+- Container runtime configuration and container hostnames.
+- DNS records, resolver configuration, and /etc/hosts entries.
 
 ## Requirements
 
-Ansible 2.9 or higher.
-
-## Variables
-
-Variables and defaults for this role:
-
-```yaml
-# The role is disabled by default, so you do not get in trouble.
-# Checked in tasks/main.yml.
-hostname_role_enabled: false
-
-# If you want to change the hostname of a system, set this.
-hostname: "{{ ansible_hostname }}"
-```
+- Gather Ansible facts before applying the role.
 
 ## Dependencies
 
-Run `ansible-role-hosts` after changing hostname to update your `/etc/hosts`-file
-
-- [`ansible-role-hosts`](https://github.com/jomrr/ansible-role-hosts)
-
-This could be a `requirements.yml`-file in your playbook.
-See [Ansible Galaxy Docs](https://galaxy.ansible.com/docs/using/installing.html#installing-multiple-roles-from-a-file).
-
 ```yaml
----
-# file: requirements.yml
-
-- src: https://github.com/jomrr/ansible-role-hosts.git
-  name: hosts
-  version: master
+collections:
+  - name: community.general
+    version: '>=12.0.0'
 ```
 
-## Example Playbooks
+## Role Variables
 
-Some examples.
+### `hostname_name`
 
-### Rename all hosts of a hostgroup
+Type: `str`. Required: `false`.
 
-Here is a simple example to rename all hosts of the hostgroup `db`.
+Desired system hostname; a short name without dots is recommended.
+Defaults to the current short hostname.
+Hostname changes are skipped in containers, including Docker, Podman, and LXC.
 
-> Note: Without updating `/etc/hosts` after changing the hostname,
-> I am pretty sure that trouble is ahead.
+Default:
+
+```yaml
+hostname_name: '{{ ansible_facts.hostname }}'
+```
+
+## Check Mode
+
+Package and hostname changes support Ansible check mode without applying
+changes.
+
+- The container exclusion also applies in check mode.
+
+## Service Behavior
+
+The hostname module applies changes directly; no services are restarted.
+
+## Operational Notes
+
+- Idempotent: subsequent runs with the same desired hostname and installed
+  packages report no changes.
+- A short hostname with a single DNS label is recommended. The default uses
+  ansible_facts.hostname, so an existing FQDN is shortened on non-container
+  hosts. An explicitly configured hostname_name is passed to the hostname module
+  unchanged.
+- Migration: replace the former hostname variable with hostname_name.
+- Molecule checks utility availability, idempotency, check mode, and
+  preservation of the runtime-assigned container hostname despite a different
+  requested name. Hostname changes on physical machines and virtual machines
+  require separate validation outside the container scenarios.
+
+## Supported Platforms
+
+| OS Family | Distribution | Version | Container Image |
+| --------- | ------------ | ------- | --------------- |
+| RedHat | AlmaLinux | latest | [jomrr/molecule-almalinux:latest](https://hub.docker.com/r/jomrr/molecule-almalinux) |
+| Debian | Debian | latest | [jomrr/molecule-debian:latest](https://hub.docker.com/r/jomrr/molecule-debian) |
+| RedHat | Fedora | latest | [jomrr/molecule-fedora:latest](https://hub.docker.com/r/jomrr/molecule-fedora) |
+| Suse | OpenSuse Leap | latest | [jomrr/molecule-opensuse-leap:latest](https://hub.docker.com/r/jomrr/molecule-opensuse-leap) |
+| Suse | OpenSuse Tumbleweed | latest | [jomrr/molecule-opensuse-tumbleweed:latest](https://hub.docker.com/r/jomrr/molecule-opensuse-tumbleweed) |
+| Debian | Ubuntu | latest | [jomrr/molecule-ubuntu:latest](https://hub.docker.com/r/jomrr/molecule-ubuntu) |
+
+## Example Playbook
+
+### Set a short hostname
+
+Configure a short hostname on physical machines and virtual machines.
 
 ```yaml
 ---
-# role: ansible-playbook-db
-# file: site.yml
+# name: "jomrr.hostname"
+# file: "playbook_hostname.yml"
 
-- hosts: db
-  become: true
+- name: "PLAYBOOK | hostname"
+  hosts: "hostname_hosts"
   gather_facts: true
-  vars:
-    hostname_role_enabled: true
-    hostname: "db-{{ ansible_hostname }}"
-    hosts_role_enabled: true
   roles:
-    - role: ansible-role-hostname
-    - role: ansible-role-hosts
+    - role: "jomrr.hostname"
+      hostname_name: "web01"
 ```
-
-### Configure FQDN with static IP address
-
-Another use case could be, that you want to rename some servers and
-all systems should return their FQDN when issuing `hostname -f`.
-Some services require this to work, e.g. foreman.
-
-This uses the role
-[`ansible-role-hosts`](https://github.com/jomrr/ansible-role-hosts)
-as dependency and assumes your hosts have static ip addresses.
-
-If the hosts have IP addresses assigned via dhcp as permanent leases
-you can add `hosts_ip_static: True` to playbook `vars`.
-This prevents the system from getting `127.0.1.1` as IP address in
-the `/etc/hosts` file.
-
-The following playbook would update all hostnames of the hostgroup `foreman`
-and rewrite the `/etc/hosts`-files with the updated names and IPs.
-For the domain name it uses `ansible_domain` implicitly.
-
-If you want to set the domain name explicitly add `hosts_domain: yours.tld`
-to the `vars`-dictionary.
-
-```yaml
----
-# playbook: ansible-playbook-foreman
-# file: site.yml
-
-- hosts: foreman
-  become: true
-  gather_facts: true
-  vars:
-    hosts_role_enabled: true
-    hostname_role_enabled: true
-    hostname: "foreman-{{ ansible_hostname }}"
-  roles:
-    - role: ansible-role-hostname
-    - role: ansible-role-hosts
-```
-
-## License and Author
-
-- Author:: [jomrr](https://github.com/jomrr/)
-- Copyright:: 2020, [jomrr](https://github.com/jomrr/)
-
-Licensed under [MIT License](https://opensource.org/licenses/MIT).
-See [LICENSE](https://github.com/jomrr/ansible-role-hostname/blob/master/LICENSE) file in repository.
 
 ## References
 
-- [ansible.builtin.hostname](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/hostname_module.html)
-- [ArchWiki](https://wiki.archlinux.org/)
+- [Systemd hostname recommendations](https://github.com/systemd/systemd/blob/main/man/hostname.xml)
+- [Ansible hostname module](https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/hostname_module.html)
+
+## Author
+
+[Jonas Mauer](https://github.com/jomrr)
+
+## License
+
+This project is licensed under the MIT License.
+See [LICENSE](LICENSE) for the full license text.
+
+Copyright (c) 2020 Jonas Mauer.

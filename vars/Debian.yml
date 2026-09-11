@@ -1,0 +1,6 @@
+---
+# role: hostname
+# file: vars/Debian.yml
+
+__hostname_packages:
+  - hostname

@@ -1,20 +1,20 @@
 ---
-# role: jomrr.hostname
+# role: hostname
 # file: tasks/main.yml
 
-- name: "Install packages for ansible-role-hostname"
+- name: "HOSTNAME | Load platform packages"
+  ansible.builtin.include_vars: "{{ ansible_facts.os_family }}.yml"
+
+- name: "HOSTNAME | Install hostname utilities"
+  become: true
+  become_user: root
   ansible.builtin.package:
-    name: "{{ hostname_packages }}"
+    name: "{{ __hostname_packages }}"
     state: present
 
-- name: "Set hostname"
+- name: "HOSTNAME | Set the system hostname"
+  become: true
+  become_user: root
   ansible.builtin.hostname:
-    name: "{{ hostname }}"
-  register: hostname_change
-  notify:
-    - restart hostname
-    - restart systemd-logind
-    - gather facts
-  when: ansible_virtualization_role == 'host'
-    or (ansible_virtualization_role == 'guest'
-    and ansible_virtualization_type not in ['docker', 'lxc', 'podman'])
+    name: "{{ hostname_name }}"
+  when: "'container' not in ansible_facts.virtualization_tech_guest"

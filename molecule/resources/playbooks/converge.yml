@@ -1,12 +1,9 @@
 ---
-# role: jomrr.hostname
+# role: hostname
 # file: molecule/resources/playbooks/converge.yml
 
-- name: Converge
+- name: "Molecule | converge | hostname"
   hosts: all
-  become: true
   gather_facts: true
-  vars:
-    hostname_role_enabled: true
-  roles:    # to enable required roles put them in requirements.yml and add here
+  roles:
     - role: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}"

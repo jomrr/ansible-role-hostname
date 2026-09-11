@@ -1,0 +1,6 @@
+---
+# role: hostname
+# file: vars/RedHat.yml
+
+__hostname_packages:
+  - hostname

@@ -1,0 +1,6 @@
+---
+# role: hostname
+# file: vars/Suse.yml
+
+__hostname_packages:
+  - hostname

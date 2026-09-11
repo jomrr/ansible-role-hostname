@@ -1,39 +1,22 @@
 ---
-# role: jomrr.hostname
+# role: hostname
 # file: molecule/resources/playbooks/prepare.yml
-# code: language=ansible-jinja
 
-- name: "PLAYBOOK | Prepare | hostname"
+- name: "HOSTNAME | Wait for test containers"
   hosts: all
-  become: true
+  gather_facts: false
+  tasks:
+    - name: "HOSTNAME | Wait for Ansible connectivity"
+      ansible.builtin.wait_for_connection:
+        timeout: 60
+
+- name: "HOSTNAME | Prepare package metadata"
+  hosts: all
   gather_facts: true
   tasks:
-    - name: "Update apk cache and installed packages"
-      community.general.apk:
-        available: true
-        update_cache: true
-        upgrade: true
-      when: ansible_pkg_mgr == "apk"
-    - name: "Update apt cache and installed packages"  # noqa: package-latest
+    - name: "HOSTNAME | Refresh Debian package metadata"
+      become: true
+      become_user: root
       ansible.builtin.apt:
-        force_apt_get: true
-        state: latest
         update_cache: true
-      when: ansible_pkg_mgr == "apt"
-    - name: "Update dnf cache and installed packages"  # noqa: package-latest
-      ansible.builtin.dnf:
-        name: "*"
-        state: latest
-        update_cache: true
-      when: ansible_pkg_mgr == "dnf"
-    - name: "Update pacman cache and installed packages"
-      community.general.pacman:
-        update_cache: true
-        upgrade: true
-      when: ansible_pkg_mgr == "pacman"
-    - name: "Update zypper cache and installed packages"  # noqa: package-latest
-      community.general.zypper:
-        name: "*"
-        state: latest
-        update_cache: true
-      when: ansible_pkg_mgr == "zypper"
+      when: ansible_facts.pkg_mgr == 'apt'

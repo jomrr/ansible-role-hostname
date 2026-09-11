@@ -1,0 +1,16 @@
+---
+# role: hostname
+# file: meta/argument_specs.yml
+
+argument_specs:
+  main:
+    short_description: Install hostname utilities and manage the system hostname outside
+      containers.
+    options:
+      hostname_name:
+        type: str
+        default: '{{ ansible_facts.hostname }}'
+        description:
+          - Desired system hostname; a short name without dots is recommended.
+          - Defaults to the current short hostname.
+          - Hostname changes are skipped in containers, including Docker, Podman, and LXC.
